@@ -1,0 +1,45 @@
+﻿Практическое задание по теме “Операторы, фильтрация, сортировка и ограничение. Агрегация данных”. Работаем с БД vk и данными, которые вы сгенерировали ранее:
+1. Пусть задан некоторый пользователь. Из всех пользователей соц. сети найдите человека, который больше всех общался с выбранным пользователем (написал ему сообщений).
+SELECT 
+u.first_name,
+COUNT(*)
+FROM messages m 
+LEFT JOIN users u ON
+m.from_user_id = u.id 
+WHERE to_user_id = 1
+GROUP BY u.first_name
+
+
+2. Подсчитать общее количество лайков, которые получили пользователи младше 10 лет.
+WITH 10_years AS (
+SELECT
+                FLOOR((TO_DAYS(NOW()) - TO_DAYS(p.birthday))/ 365.25) AS age,
+                COUNT(*) AS Qty
+        FROM
+                likes l
+        LEFT JOIN profiles p ON
+                l.user_id = p.user_id
+        GROUP BY
+                age
+        HAVING
+                age < 10
+ )
+SELECT SUM(Qty)
+FROM 10_years
+
+
+
+
+3. Определить кто больше поставил лайков (всего): мужчины или женщины.
+SELECT 
+u.gender ,
+COUNT(user_id)
+FROM likes l 
+LEFT JOIN users u ON
+l.user_id = u.id 
+GROUP BY u.gender LIMIT 1
+
+
+
+
+Задачи необходимо решить с использованием объединения таблиц (JOIN)
